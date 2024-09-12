@@ -1,4 +1,4 @@
-## Deploying workspace in Databricks
+## Deploying one workspace in Databricks
 
 ### Prerequisites
 
