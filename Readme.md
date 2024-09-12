@@ -1,4 +1,4 @@
-## Deploying one workspace in Databricks
+## Deploying workspace in Databricks using Terraform
 
 ### Prerequisites
 
