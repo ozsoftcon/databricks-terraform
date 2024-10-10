@@ -3,7 +3,7 @@ data "aws_availability_zones" "available" {}
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
 
-  name = "${var.demo_prefix}-vpc"
+  name = "demo-vpc-${var.name_suffix}"
   cidr = var.cidr_block
   azs  = data.aws_availability_zones.available.names
   tags = var.tags
@@ -18,7 +18,7 @@ module "vpc" {
   cidrsubnet(var.cidr_block, 3, 2)]
 
   manage_default_security_group = true
-  default_security_group_name   = "${var.demo_prefix}-sg"
+  default_security_group_name   = "demo-sg-${var.name_suffix}"
 
   default_security_group_egress = [{
     cidr_blocks = "0.0.0.0/0"
@@ -42,9 +42,9 @@ module "vpc_endpoints" {
       service_type = "Gateway"
       route_table_ids = flatten([
         module.vpc.private_route_table_ids,
-      module.vpc.public_route_table_ids])
+        module.vpc.public_route_table_ids])
       tags = {
-        Name = "${var.demo_prefix}-s3-vpc-endpoint"
+        Name = "demo-s3-vpc-endpoint-${var.name_suffix}"
       }
     },
     sts = {
@@ -52,7 +52,7 @@ module "vpc_endpoints" {
       private_dns_enabled = true
       subnet_ids          = module.vpc.private_subnets
       tags = {
-        Name = "${var.demo_prefix}-sts-vpc-endpoint"
+        Name = "demo--sts-vpc-endpoint-${var.name_suffix}"
       }
     },
     kinesis-streams = {
@@ -60,19 +60,10 @@ module "vpc_endpoints" {
       private_dns_enabled = true
       subnet_ids          = module.vpc.private_subnets
       tags = {
-        Name = "${var.demo_prefix}-kinesis-vpc-endpoint"
+        Name = "demo-kinesis-vpc-endpoint-${var.name_suffix}"
       }
     },
   }
 
   tags = var.tags
-}
-
-resource "databricks_mws_networks" "this" {
-  provider           = databricks
-  account_id         = var.databricks_account_id
-  network_name       = "${var.demo_prefix}-network"
-  security_group_ids = [module.vpc.default_security_group_id]
-  subnet_ids         = module.vpc.private_subnets
-  vpc_id             = module.vpc.vpc_id
 }

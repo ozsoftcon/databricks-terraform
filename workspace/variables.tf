@@ -1,35 +1,41 @@
 variable "databricks_account_id" {
-    type = string
+  type = string
 }
 
-variable "region" {
-    type = string
+variable "databricks_client_id" {
+  type = string
 }
 
-variable "demo_prefix" {
-    type = string
+variable "databricks_client_secret" {
+  type = string
 }
 
 variable "tags" {
-    type = map(string)
+  type = map
+}
+
+variable "name_suffix" {
+  type =string
+}
+
+variable "workspace_host" {
+  description = "Databricks Workspace Host URL"
+  type        = string
+}
+
+variable "region" {
+  description = "AWS region"
+  type        = string
+  default     = "ap-soutehast-2"
 }
 
 variable "workspace_name" {
-    type = string
+  type = string
 }
 
-variable "mws_credentials_id" {
-    type = string
+variable "WORKSPACE" {
+  type = string
+  default = ""
 }
 
-variable "storage_configuration_id" {
-    type = string
-}
 
-variable "network_configuration_id" {
-    type = string
-}
-
-variable "workspace_admin_group" {
-    type = string
-}

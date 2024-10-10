@@ -15,7 +15,7 @@ locals {
 
 resource "databricks_group" "tf_admin_group" {
   provider                   = databricks
-  display_name               = "${var.demo_prefix}-group"
+  display_name               = "demo-group-${var.name_suffix}"
   allow_cluster_create       = true
   allow_instance_pool_create = true
   workspace_access           = true
@@ -30,6 +30,11 @@ resource "databricks_group_member" "users" {
 
 resource "databricks_group_member" "service_principal" {
    provider = databricks
-    group_id  = databricks_group.tf_admin_group.id
-    member_id = data.databricks_service_principal.tf_service_principal.id
+   group_id  = databricks_group.tf_admin_group.id
+   member_id = data.databricks_service_principal.tf_service_principal.id
+}
+
+resource "databricks_group_role" "tf_admin_group_role" {
+  group_id = databricks_group.tf_admin_group.id
+  role     = "account_admin"
 }

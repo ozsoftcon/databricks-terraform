@@ -1,9 +1,9 @@
 resource "aws_s3_bucket" "root_storage_bucket" {
-  bucket        = "${var.demo_prefix}-rootbucket"
+  bucket        = "demo-rootbucket-${var.name_suffix}"
   acl           = "private"
   force_destroy = true
   tags = merge(var.tags, {
-    Name = "${var.demo_prefix}-rootbucket"
+    Name = "demo-rootbucket-${var.name_suffix}"
   })
 }
 
@@ -41,11 +41,4 @@ resource "aws_s3_bucket_versioning" "root_bucket_versioning" {
   versioning_configuration {
     status = "Disabled"
   }
-}
-
-resource "databricks_mws_storage_configurations" "this" {
-  provider                   = databricks
-  account_id                 = var.databricks_account_id
-  bucket_name                = aws_s3_bucket.root_storage_bucket.bucket
-  storage_configuration_name = "${var.demo_prefix}-storage"
 }

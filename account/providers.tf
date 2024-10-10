@@ -1,6 +1,6 @@
 
 terraform {
-  required_version = ">= 1.8.5, <= 1.9.5"
+  required_version = ">= 1.8.5, <= 1.9.6"
 
   required_providers {
     databricks = {
@@ -26,10 +26,10 @@ provider "databricks" {
   alias         = "account"
 }
 
-// initialize provider in "MWS" mode for a new workspace
-provider "databricks" {
-  host          = "https://${var.WORKSPACE}.cloud.databricks.com"
-  client_id     = var.databricks_client_id
-  client_secret = var.databricks_client_secret
-  alias         = "demo_workspace"
-}
+# // initialize provider in "MWS" mode for a new workspace
+# provider "databricks" {
+#   host          = "https://${var.WORKSPACE}.cloud.databricks.com"
+#   client_id     = var.databricks_client_id
+#   client_secret = var.databricks_client_secret
+#   alias         = "demo_workspace"
+# }

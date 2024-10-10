@@ -11,7 +11,7 @@ resource "time_sleep" "wait" {
 }
 
 resource "aws_iam_role" "cross_account_role" {
-  name               = "${var.demo_prefix}-role-crossaccount"
+  name               = "demo-role-crossaccount-${var.name_suffix}"
   assume_role_policy = data.databricks_aws_assume_role_policy.this.json
   tags               = var.tags
 }
@@ -22,15 +22,8 @@ data "databricks_aws_crossaccount_policy" "this" {
 }
 
 resource "aws_iam_role_policy" "this" {
-  name   = "${var.demo_prefix}-policy"
+  name   = "demo-policy-${var.name_suffix}"
   role   = aws_iam_role.cross_account_role.id
   policy = data.databricks_aws_crossaccount_policy.this.json
   # provider = databricks
-}
-
-resource "databricks_mws_credentials" "this" {
-  provider         = databricks
-  role_arn         = aws_iam_role.cross_account_role.arn
-  credentials_name = "${var.demo_prefix}-creds"
-  depends_on       = [time_sleep.wait, aws_iam_role_policy.this]
 }

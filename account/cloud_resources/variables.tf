@@ -2,7 +2,7 @@ variable "databricks_account_id" {
     type = string
 }
 
-variable "demo_prefix" {
+variable "name_suffix" {
     type = string
 }
 
@@ -11,10 +11,6 @@ variable "tags" {
 }
 
 variable "cidr_block" {
-    type = string
-}
-
-variable "workspace_host" {
     type = string
 }
 

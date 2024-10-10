@@ -10,6 +10,6 @@ variable "default_service_principal"{
   type = string
 }
 
-variable "demo_prefix" {
+variable "name_suffix" {
     type = string
 }

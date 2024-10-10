@@ -1,0 +1,114 @@
+image: hashicorp/terraform
+
+definitions:
+  steps:
+    - step: &environment_setup
+        name: Setting up environment
+        script:
+          - export DATABARICKS_CLIENT_ID=$DATABRICKS_CLIENT_ID
+          - export DATABRICKS_CLIENT_SECRET=$DATABRICKS_CLIENT_SECRET
+          - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+          - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+          - export TF_VAR_databricks_account_id=$TF_VAR_DATABRICKS_ACCOUNT_ID
+          
+    - step: &preview_demo_workspace_deployment
+        name: Preview Demo Workspace Deployment
+        caches:
+          - pip
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform plan --var-file=values.tfvars --target=module.cloud_resources --target=module.user_groups --target=module.db_workspace
+
+    - step: &destroy_demo_workspace_deployment
+        name: Destroy Demo Workspace Deployment
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform destroy --var-file=values.tfvars -auto-approve --target=module.cloud_resources --target=module.user_groups --target=module.db_workspace
+
+    - step: &deploy_demo_workspace_deployment
+        name: Deploy the Demo Workspace
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform apply --var-file=values.tfvars -auto-approve --target=module.cloud_resources --target=module.user_groups --target=module.db_workspace
+
+    - step: &preview_demo_account_groups
+        name: Preview Account Groups
+        caches:
+          - pip
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform plan --var-file=values.tfvars --target=module.db_account_group_cost_control --target=module.db_account_group_data_analysts --target=module.db_account_group_finance
+
+    - step: &deploy_demo_account_groups
+        name: Deploy/Update Account Groups
+        caches:
+          - pip
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform apply --var-file=values.tfvars --auto-approve --target=module.db_account_group_cost_control --target=module.db_account_group_data_analysts --target=module.db_account_group_finance
+    - step: &destroy_demo_account_groups
+        name: Destroy Account Groups
+        caches:
+          - pip
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform destroy --var-file=values.tfvars --auto-approve --target=module.db_account_group_cost_control --target=module.db_account_group_data_analysts --target=module.db_account_group_finance
+
+
+    - step: &preview_deploy_job_in_workspace
+        name: Preview Deploy Job in Workspace
+        caches:
+          - pip
+        script: 
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform plan --var-file=values.tfvars --target=module.db_workspace_jobs
+    
+    - step: &deploy_job_in_workspace
+        name: Deploy Job in Workspace
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform apply --var-file=values.tfvars --auto-approve --target=module.db_workspace_jobs
+
+    - step: &destroy_job_in_workspace
+        name: Destroy Job in Workspace
+        script:
+          - cd $BITBUCKET_CLONE_DIR/demo_workspace
+          - terraform init
+          - terraform destroy --var-file=values.tfvars --auto-approve --target=module.db_workspace_jobs
+
+
+
+
+pipelines:
+  custom:
+    preview_demo_deployment:
+      - step: *preview_demo_workspace_deployment
+    destroy_demo_deployment:
+      - step: *destroy_demo_workspace_deployment
+    deploy_demo_workspace:
+      - step: *preview_demo_workspace_deployment
+      - step: *deploy_demo_workspace_deployment
+
+    preview_deploy_job:
+      - step: *preview_deploy_job_in_workspace
+    deploy_job:
+      - step: *preview_deploy_job_in_workspace
+      - step: *deploy_job_in_workspace
+    destroy_workspace_job:
+      - step: *destroy_job_in_workspace
+
+    preview_account_groups:
+      - step: *preview_demo_account_groups
+    deploy_account_groups:
+      - step: *preview_demo_account_groups
+      - step: *deploy_demo_account_groups
+    destroy_account_groups:
+      - step: *destroy_demo_account_groups

@@ -18,23 +18,14 @@ variable "cidr_block" {
   type = string
 }
 
-variable "demo_prefix" {
+variable "name_suffix" {
   type =string
-}
-
-variable "workspace_host" {
-  description = "Databricks Workspace Host URL"
-  type        = string
 }
 
 variable "region" {
   description = "AWS region"
   type        = string
   default     = "ap-soutehast-2"
-}
-
-variable "workspace_name" {
-  type = string
 }
 
 variable "default_admin_users" {
@@ -45,8 +36,3 @@ variable "default_service_principal"{
   type = string
 }
 
-
-variable "WORKSPACE" {
-  type = string
-  default = ""
-}
